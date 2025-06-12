@@ -4,7 +4,7 @@
 
 显示为图片
 
-    <div class="card">
+                <div class="card">
                     <div class="card-header">
                         <div class="avatar"><img src="图片URL" alt="示例图片1"></div>
                         <div>
