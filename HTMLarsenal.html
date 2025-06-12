@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTMLarsenal</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wechat-green: #07C160;
+            --wechat-dark-green: #06a652;
+            --wechat-light-green: #d0f1dd;
+            --wechat-chat-bg: #ebebeb;
+            --surface: #ffffff;
+            --background: #f5f5f5;
+            --on-primary: #ffffff;
+            --on-surface: #333333;
+            --on-surface-secondary: #666666;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --card-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .dark-theme {
+            --surface: #1e1e1e;
+            --background: #121212;
+            --on-surface: #ffffff;
+            --on-surface-secondary: #aaaaaa;
+            --shadow: rgba(0, 0, 0, 0.25);
+            --wechat-chat-bg: #2c2c2c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--background);
+            color: var(--on-surface);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        /* 顶部应用栏样式 */
+        .app-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--wechat-green);
+            color: var(--on-primary);
+            padding: 16px 24px;
+            box-shadow: 0 2px 10px var(--shadow);
+            transition: var(--transition);
+        }
+
+        .app-bar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .app-title i {
+            margin-right: 12px;
+            background-color: white;
+            border-radius: 50%;
+            padding: 5px;
+            color: var(--wechat-green);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--on-primary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* 搜索和过滤区域 */
+        .controls {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            border-radius: 28px;
+            border: none;
+            background-color: var(--surface);
+            font-size: 1rem;
+            transition: var(--transition);
+            color: var(--on-surface);
+            box-shadow: 0 1px 3px var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 2px 6px var(--shadow);
+            border-color: var(--wechat-light-green);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--on-surface);
+            opacity: 0.7;
+        }
+
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 16px;
+            background-color: var(--surface);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--on-surface);
+            box-shadow: 0 1px 3px var(--shadow);
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-btn i {
+            margin-right: 6px;
+            font-size: 18px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--wechat-green);
+            color: var(--on-primary);
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto 48px;
+            padding: 0 24px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin: 24px 0 16px;
+            padding-left: 8px;
+            border-left: 4px solid var(--wechat-green);
+        }
+
+        .section-title i {
+            margin-right: 8px;
+            color: var(--wechat-green);
+        }
+
+        /* 卡片网格布局 */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .card {
+            background-color: var(--surface);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: 0 3px 6px var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px var(--shadow);
+        }
+
+        .card-header {
+            padding: 16px 16px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            background-color: var(--wechat-light-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--wechat-green);
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-right: 16px;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-title {
+            font-weight: 500;
+            font-size: 1.2rem;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: var(--on-surface-secondary);
+            margin-top: 4px;
+        }
+
+        .card-content {
+            padding: 16px;
+            flex-grow: 1;
+        }
+
+        .card-description {
+            color: var(--on-surface);
+            opacity: 0.9;
+            margin-top: 8px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            background: var(--wechat-chat-bg);
+            padding: 12px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .card-description:before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: -10px;
+            border-width: 5px 10px 5px 0;
+            border-style: solid;
+            border-color: transparent var(--wechat-chat-bg) transparent transparent;
+        }
+
+        .card-footer {
+            padding: 8px 16px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-tag {
+            padding: 6px 12px;
+            border-radius: 16px;
+            background-color: var(--wechat-light-green);
+            color: var(--wechat-dark-green);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .visit-btn {
+            padding: 8px 24px;
+            border-radius: 20px;
+            background-color: var(--wechat-green);
+            color: var(--on-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px var(--shadow);
+            display: flex;
+            align-items: center;
+        }
+
+        .visit-btn i {
+            margin-left: 6px;
+        }
+
+        .visit-btn:hover {
+            background-color: var(--wechat-dark-green);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .app-title span {
+                display: none;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--on-surface);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--wechat-green);
+            text-decoration: none;
+        }
+
+        /* 绿色特色元素 */
+        .wechat-qr {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--wechat-green);
+            background: var(--wechat-light-green);
+            border-radius: 4px;
+        }
+
+        .wechat-indicator {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: #ff4d4f;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 48px;
+            color: var(--on-surface);
+            opacity: 0.5;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: block;
+            color: var(--wechat-green);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部应用栏 -->
+    <header class="app-bar">
+        <div class="app-bar-content">
+            <div class="app-title">
+                <i class="material-icons">link</i>
+                <span>HTMLarsenal</span>
+            </div>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="material-icons">dark_mode</i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 搜索和过滤区域 -->
+    <section class="controls">
+        <div class="search-container">
+            <i class="material-icons search-icon">search</i>
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索...">
+        </div>
+        <div class="filter-container">
+        </div>
+    </section>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <h2 class="section-title"><i class="material-icons">star</i> 推荐</h2>
+        <div class="cards-container">
+            <!-- 链接卡片1 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="avatar"><img src="https://blog.yoning.icu/usr/uploads/xnmlogo.jpg" alt="小柠檬博客"></div>
+                    <div>
+                        <div class="card-title">图片版</div>
+                        <div class="card-subtitle">官方 · 新闻 · 官方blog</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-description">
+                        永柠网络科技旗下新闻blog
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="card-tag">博客</div>
+                    <a href="https://github.com/ttaaagg/HTMLarsenal/" class="visit-btn">访问 <i class="material-icons">arrow_forward</i></a>
+                </div>
+            </div>
+
+            <!-- 链接卡片2 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="avatar">文</div>
+                    <div>
+                        <div class="card-title">文字版</div>
+                        <div class="card-subtitle">二次元</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-description">
+                        现在还没找到一个像样的Logo
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="card-tag">设计</div>
+                    <a href="https://github.com/ttaaagg/HTMLarsenal/" class="visit-btn">访问 <i class="material-icons">arrow_forward</i></a>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title"><i class="material-icons">group</i> 其他链接</h2>
+        <div class="cards-container">
+            <!-- 链接卡片4 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="avatar"><img src="https://free-img.mofashi.ltd/5/2025/04/09/67f688efbace3.jpg" alt="LOGO"></div>
+                    <div>
+                        <div class="card-title">Take the的博客</div>
+                        <div class="card-subtitle">blog · Typecho · 技术</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-description">
+                        是博客就对了
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="card-tag">技术</div>
+                    <a href="https://qindoc.com/" class="visit-btn">访问 <i class="material-icons">arrow_forward</i></a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>© 2023-2025 永柠网络科技·小柠檬 | 基于 Material Design 2 设计 | <a href="mailto:takethe@yoning.icu">添加我的链接</a></p>
+    </footer>
+
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            
+            if (document.body.classList.contains('dark-theme')) {
+                themeIcon.textContent = 'light_mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.textContent = 'dark_mode';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // 检查本地存储中的主题设置
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeIcon.textContent = 'light_mode';
+        }
+
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.card');
+        
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const subtitle = card.querySelector('.card-subtitle').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || subtitle.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 过滤功能
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有按钮的active类
+                filterBtns.forEach(b => b.classList.remove('active'));
+                
+                // 为当前点击的按钮添加active类
+                btn.classList.add('active');
+                
+                const filter = btn.textContent.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, "");
+                
+                cards.forEach(card => {
+                    const tag = card.querySelector('.card-tag').textContent;
+                    
+                    if (filter === '全部' || tag === filter) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
